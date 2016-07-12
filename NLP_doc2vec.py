@@ -95,7 +95,7 @@ model_dbow.build_vocab(temp1)
 temp2 = x_train[:]
 temp2.extend(unsup_reviews)
 all_train_reviews = np.concatenate((x_train, unsup_reviews))
-for epoch in range(1):
+for epoch in range(10):
     # perm = np.random.permutation(all_train_reviews.shape[0])
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp2)
@@ -105,18 +105,20 @@ for epoch in range(1):
 
 # Get training set vectors from our models
 def getVecs(model, corpus, size):
-    vec = np.zeros(size).reshape((1, size))
-    count = 0.
+    vecs = []
     for z in corpus:
+        vec = np.zeros(size).reshape((1, size))
+        count = 0.
         for each in np.array(model[z.words]):
             try:
                 vec += each.reshape((1, size))
                 count += 1.
             except KeyError:
                 continue
-    if count != 0:
-        vec /= count
-    return vec
+        if count != 0:
+            vec /= count
+        vecs.extend(vec)
+    return np.array(vecs)
 
 
 train_vecs_dm = getVecs(model_dm, x_train, size)
@@ -128,7 +130,7 @@ train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
 # x_test = np.array(x_test)
 temp3 = x_test[:]
 
-for epoch in range(1):
+for epoch in range(10):
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp3)
     model_dm.train(temp3)
@@ -141,7 +143,6 @@ test_vecs_dbow = getVecs(model_dbow, x_test, size)
 test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
 lr = SGDClassifier(loss='log', penalty='l1')
 lr.fit(train_vecs, y_train)
-
 print 'Test Accuracy: %.2f' % lr.score(test_vecs, y_test)
 
 pred_probas = lr.predict_proba(test_vecs)[:, 1]
