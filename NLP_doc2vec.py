@@ -19,23 +19,35 @@ unsup_reviews1 = []
 unsup_reviews2 = []
 unsup_reviews = []
 
-for pos_file in pos_files[:800]:
+for pos_file in pos_files[:900]:
     with open(data_path + "pos/" + pos_file, 'r') as infile:
+        each = ''
         each_article = infile.readlines()
-    pos_reviews.extend(each_article)
-for neg_file in neg_files[:800]:
+        for each_sentence in each_article:
+            each += each_sentence
+    pos_reviews.extend([each])
+for neg_file in neg_files[:900]:
     with open(data_path + "neg/" + neg_file, 'r') as infile:
+        each = ''
         each_article = infile.readlines()
-    neg_reviews.extend(each_article)
+        for each_sentence in each_article:
+            each += each_sentence
+    neg_reviews.extend([each])
+for pos_file in pos_files[900:]:
+    with open(data_path + "pos/" + pos_file, 'r') as infile:
+        each = ''
+        each_article = infile.readlines()
+        for each_sentence in each_article:
+            each += each_sentence
+    unsup_reviews1.extend([each])
+for neg_file in neg_files[900:]:
+    with open(data_path + "neg/" + neg_file, 'r') as infile:
+        each = ''
+        each_article = infile.readlines()
+        for each_sentence in each_article:
+            each += each_sentence
+    unsup_reviews2.extend([each])
 
-for pos_file in pos_files[800:]:
-    with open(data_path + "pos/" + pos_file, 'r') as infile:
-        each_article = infile.readlines()
-    unsup_reviews1.extend(each_article)
-for neg_file in neg_files[800:]:
-    with open(data_path + "neg/" + neg_file, 'r') as infile:
-        each_article = infile.readlines()
-    unsup_reviews2.extend(each_article)
 
 # use 1 for positive sentiment, 0 for negative
 y = np.concatenate((np.ones(len(pos_reviews)), np.zeros(len(neg_reviews))))
@@ -53,7 +65,7 @@ def cleanText(corpus):
 
     # treat punctuation as individual words
     for c in punctuation:
-        corpus = [z.replace(c, ' %s ' % c) for z in corpus]
+        corpus = [z.replace(c, ' ') for z in corpus]
     corpus = [z.split() for z in corpus]
     return corpus
 
@@ -94,7 +106,7 @@ model_dbow.build_vocab(temp1)
 # We pass through the data set multiple times, shuffling the training reviews each time to improve accuracy.
 temp2 = x_train[:]
 temp2.extend(unsup_reviews)
-all_train_reviews = np.concatenate((x_train, unsup_reviews))
+# all_train_reviews = np.concatenate((x_train))
 for epoch in range(10):
     # perm = np.random.permutation(all_train_reviews.shape[0])
     print "+=== Iteration %d ===+" % epoch

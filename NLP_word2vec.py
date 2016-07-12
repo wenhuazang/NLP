@@ -19,12 +19,18 @@ neg_reviews = []
 
 for pos_file in pos_files:
     with open(data_path + "pos/" + pos_file, 'r') as infile:
+        each = ''
         each_article = infile.readlines()
-    pos_reviews.extend(each_article)
+        for each_sentence in each_article:
+            each += each_sentence
+    pos_reviews.extend([each])
 for neg_file in neg_files:
     with open(data_path + "neg/" + neg_file, 'r') as infile:
+        each = ''
         each_article = infile.readlines()
-    neg_reviews.extend(each_article)
+        for each_sentence in each_article:
+            each += each_sentence
+    neg_reviews.extend([each])
 
 # use 1 for positive sentiment, 0 for negative
 y = np.concatenate((np.ones(len(pos_reviews)), np.zeros(len(neg_reviews))))
