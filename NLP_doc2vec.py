@@ -90,7 +90,7 @@ x_train = labelizeReviews(x_train, 'TRAIN')
 x_test = labelizeReviews(x_test, 'TEST')
 unsup_reviews = labelizeReviews(unsup_reviews, 'UNSUP')
 
-size = 400
+size =300
 
 # instantiate our DM and DBOW models
 model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=3)
@@ -107,6 +107,7 @@ model_dbow.build_vocab(temp1)
 temp2 = x_train[:]
 temp2.extend(unsup_reviews)
 # all_train_reviews = np.concatenate((x_train))
+print "+===== Training =====+"
 for epoch in range(10):
     # perm = np.random.permutation(all_train_reviews.shape[0])
     print "+=== Iteration %d ===+" % epoch
@@ -135,13 +136,12 @@ def getVecs(model, corpus, size):
 
 train_vecs_dm = getVecs(model_dm, x_train, size)
 train_vecs_dbow = getVecs(model_dbow, x_train, size)
-
 train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
 
 # train over test set
 # x_test = np.array(x_test)
 temp3 = x_test[:]
-
+print "+===== Testing ======+"
 for epoch in range(10):
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp3)
@@ -151,8 +151,8 @@ for epoch in range(10):
 # Construct vectors for test reviews
 test_vecs_dm = getVecs(model_dm, x_test, size)
 test_vecs_dbow = getVecs(model_dbow, x_test, size)
-
 test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
+
 lr = SGDClassifier(loss='log', penalty='l1')
 lr.fit(train_vecs, y_train)
 print 'Test Accuracy: %.2f' % lr.score(test_vecs, y_test)
