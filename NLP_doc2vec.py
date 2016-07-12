@@ -90,7 +90,7 @@ x_train = labelizeReviews(x_train, 'TRAIN')
 x_test = labelizeReviews(x_test, 'TEST')
 unsup_reviews = labelizeReviews(unsup_reviews, 'UNSUP')
 
-size =300
+size = 400
 
 # instantiate our DM and DBOW models
 model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=3)
