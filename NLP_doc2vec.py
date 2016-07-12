@@ -108,7 +108,7 @@ model_dbow.build_vocab(temp1)
 temp2 = x_train[:]
 temp2.extend(unsup_reviews)
 # all_train_reviews = np.concatenate((x_train))
-print "+==== Training =+===+"
+print "+==== Training =====+"
 for epoch in range(iteration):
     # perm = np.random.permutation(all_train_reviews.shape[0])
     print "+=== Iteration %d ===+" % epoch
@@ -142,7 +142,7 @@ train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
 # train over test set
 # x_test = np.array(x_test)
 temp3 = x_test[:]
-print "+===== Testing ======+"
+print "+===== Testing =====+"
 for epoch in range(iteration):
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp3)
