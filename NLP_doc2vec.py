@@ -91,6 +91,7 @@ x_test = labelizeReviews(x_test, 'TEST')
 unsup_reviews = labelizeReviews(unsup_reviews, 'UNSUP')
 
 size = 400
+iteration = 10
 
 # instantiate our DM and DBOW models
 model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=3)
@@ -107,8 +108,8 @@ model_dbow.build_vocab(temp1)
 temp2 = x_train[:]
 temp2.extend(unsup_reviews)
 # all_train_reviews = np.concatenate((x_train))
-print "+===== Training =====+"
-for epoch in range(10):
+print "+==== Training =+===+"
+for epoch in range(iteration):
     # perm = np.random.permutation(all_train_reviews.shape[0])
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp2)
@@ -142,7 +143,7 @@ train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
 # x_test = np.array(x_test)
 temp3 = x_test[:]
 print "+===== Testing ======+"
-for epoch in range(10):
+for epoch in range(iteration):
     print "+=== Iteration %d ===+" % epoch
     random.shuffle(temp3)
     model_dm.train(temp3)
