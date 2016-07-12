@@ -19,28 +19,28 @@ unsup_reviews1 = []
 unsup_reviews2 = []
 unsup_reviews = []
 
-for pos_file in pos_files[:800]:
+for pos_file in pos_files[:900]:
     with open(data_path + "pos/" + pos_file, 'r') as infile:
         each = ''
         each_article = infile.readlines()
         for each_sentence in each_article:
             each += each_sentence
     pos_reviews.extend([each])
-for neg_file in neg_files[:800]:
+for neg_file in neg_files[:900]:
     with open(data_path + "neg/" + neg_file, 'r') as infile:
         each = ''
         each_article = infile.readlines()
         for each_sentence in each_article:
             each += each_sentence
     neg_reviews.extend([each])
-for pos_file in pos_files[800:]:
+for pos_file in pos_files[900:]:
     with open(data_path + "pos/" + pos_file, 'r') as infile:
         each = ''
         each_article = infile.readlines()
         for each_sentence in each_article:
             each += each_sentence
     unsup_reviews1.extend([each])
-for neg_file in neg_files[800:]:
+for neg_file in neg_files[900:]:
     with open(data_path + "neg/" + neg_file, 'r') as infile:
         each = ''
         each_article = infile.readlines()
@@ -65,7 +65,7 @@ def cleanText(corpus):
 
     # treat punctuation as individual words
     for c in punctuation:
-        corpus = [z.replace(c, ' %s ' % c) for z in corpus]
+        corpus = [z.replace(c, ' ') for z in corpus]
     corpus = [z.split() for z in corpus]
     return corpus
 
@@ -91,7 +91,7 @@ x_test = labelizeReviews(x_test, 'TEST')
 unsup_reviews = labelizeReviews(unsup_reviews, 'UNSUP')
 
 size = 400
-iteration = 10
+iteration = 1
 
 # instantiate our DM and DBOW models
 model_dm = gensim.models.Doc2Vec(min_count=1, window=10, size=size, sample=1e-3, negative=5, workers=3)
