@@ -3,3 +3,8 @@
 .idea
 
 /review_polarity/
+/test_vecs.txt
+/train_vecs.txt
+/y_test.txt
+/y_train.txt
+.DS_Store
