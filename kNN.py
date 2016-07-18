@@ -1,8 +1,5 @@
 from numpy import *
 import operator
-import matplotlib
-import matplotlib.pyplot as plt
-from os import listdir
 
 
 def classify0(inX, dataSet, labels, k):
