@@ -1,10 +1,8 @@
 from sklearn import metrics
 from sklearn.svm import SVC
-from sklearn.cluster import KMeans
 from sklearn.linear_model import SGDClassifier
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
-import numpy as np
 from kNN import *
 
 def grabVecs(filename):

@@ -6,7 +6,6 @@ from sklearn.preprocessing import scale
 
 import numpy as np
 import os
-import random
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
 from sklearn.svm import SVC
