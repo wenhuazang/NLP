@@ -4,7 +4,8 @@ from sklearn.cluster import KMeans
 from sklearn.linear_model import SGDClassifier
 import matplotlib.pyplot as plt
 from sklearn.metrics import roc_curve, auc
-
+import numpy as np
+from kNN import *
 
 def grabVecs(filename):
     import pickle
@@ -52,19 +53,18 @@ plt.ylim([0.0, 1.05])
 plt.legend(loc='lower right')
 plt.show()
 
-knn = KMeans()
-knn.fit()
-print 'Test Accuracy of Logistic: %.2f' % knn.score(test_vecs, y_test)
-print 'Train Accuracy of Logistic: %.2f' % knn.score(train_vecs, y_train)
-
-pred_probas = knn.predict_proba(test_vecs)[:, 1]
-
-plt.figure(3)
-fpr, tpr, _ = roc_curve(y_test, pred_probas)
-roc_auc = auc(fpr, tpr)
-plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.legend(loc='lower right')
-plt.show()
+normMat, ranges, minVals = autoNorm(train_vecs)
+m = len(y_test)
+count = 0
+for i in range(m):
+    result = classify0((test_vecs[i] - minVals) / ranges, normMat, y_train, 5)
+    if result == y_test[i]:
+        count += 1
+print 'Test Accuracy of SVM: %.2f' % (float(count) / m)
+m = len(y_train)
+count = 0
+for i in range(m):
+    result = classify0((train_vecs[i] - minVals) / ranges, normMat, y_train, 5)
+    if result == y_train[i]:
+        count += 1
+print 'Train Accuracy of SVM: %.2f' % (float(count) / m)
