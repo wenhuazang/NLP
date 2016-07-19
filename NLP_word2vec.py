@@ -1,4 +1,4 @@
-from sklearn import metrics
+from sklearn import metrics, neighbors
 from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import SGDClassifier
 from gensim.models.word2vec import Word2Vec
@@ -112,6 +112,24 @@ print metrics.classification_report(y_train, svm.predict(train_vecs))
 pred_probas = svm.predict_proba(test_vecs)[:, 1]
 
 plt.figure(2)
+fpr, tpr, _ = roc_curve(y_test, pred_probas)
+roc_auc = auc(fpr, tpr)
+plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.legend(loc='lower right')
+plt.show()
+
+knn = neighbors.KNeighborsClassifier(15, weights='distance')
+knn.fit(train_vecs, y_train)
+print 'Test Accuracy of knn: %.2f' % knn.score(test_vecs, y_test)
+print 'Train Accuracy of knn: %.2f' % knn.score(train_vecs, y_train)
+print metrics.classification_report(y_train, knn.predict(train_vecs))
+
+pred_probas = knn.predict_proba(test_vecs)[:, 1]
+
+plt.figure(3)
 fpr, tpr, _ = roc_curve(y_test, pred_probas)
 roc_auc = auc(fpr, tpr)
 plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
