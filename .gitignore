@@ -8,3 +8,4 @@
 /y_test.txt
 /y_train.txt
 .DS_Store
+/vectors.bin
