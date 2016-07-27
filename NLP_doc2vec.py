@@ -143,13 +143,13 @@ train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
 
 # train over test set
 # x_test = np.array(x_test)
-temp3 = x_test[:]
-print "+===== Testing =====+"
-for epoch in range(iteration):
-    print "+=== Iteration %d ===+" % epoch
-    random.shuffle(temp3)
-    model_dm.train(temp3)
-    model_dbow.train(temp3)
+# temp3 = x_test[:]
+# print "+===== Testing =====+"
+# for epoch in range(iteration):
+#    print "+=== Iteration %d ===+" % epoch
+#    random.shuffle(temp3)
+#    model_dm.train(temp3)
+#    model_dbow.train(temp3)
 
 # Construct vectors for test reviews
 test_vecs_dm = getVecs(model_dm, x_test, size)
