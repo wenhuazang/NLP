@@ -11,6 +11,7 @@ import os
 import random
 from sklearn.metrics import roc_curve, auc
 import matplotlib.pyplot as plt
+from sklearn.externals import joblib
 
 data_path = "review_polarity/txt_sentoken/"
 pos_files = os.listdir(data_path + "pos/")
@@ -206,7 +207,10 @@ storeVecs(y_train, 'y_train.txt')
 # Logistic Regression
 lr = SGDClassifier(loss='log', penalty='l1')
 lr.fit(train_vecs, y_train)
+os.mkdir("LR_MODEL/")
+joblib.dump(lr, "LR_MODEL/train_model.m")
 print 'Test Accuracy of Logistic: %.2f' % lr.score(test_vecs, y_test)
+lr = joblib.load("LR_MODEL/train_model.m")
 print 'Train Accuracy of Logistic: %.2f' % lr.score(train_vecs, y_train)
 
 ShowROC(lr, 1)
@@ -214,7 +218,10 @@ ShowROC(lr, 1)
 # SVM
 svm = SVC(C=50, gamma=1, probability=True)
 svm.fit(train_vecs, y_train)
+os.mkdir("SVM_MODEL/")
+joblib.dump(svm, "SVM_MODEL/train_model.m")
 print 'Test Accuracy of SVM: %.2f' % svm.score(test_vecs, y_test)
+svm = joblib.load("SVM_MODEL/train_model.m")
 print 'Train Accuracy of SVM: %.2f' % svm.score(train_vecs, y_train)
 print metrics.classification_report(y_train, svm.predict(train_vecs))
 
@@ -223,7 +230,10 @@ ShowROC(svm, 2)
 # KNN
 knn = neighbors.KNeighborsClassifier(15, weights='distance')
 knn.fit(train_vecs, y_train)
+os.mkdir("KNN_MODEL/")
+joblib.dump(svm, "KNN_MODEL/train_model.m")
 print 'Test Accuracy of knn: %.2f' % knn.score(test_vecs, y_test)
+knn = joblib.load("KNN_MODEL/train_model.m")
 print 'Train Accuracy of knn: %.2f' % knn.score(train_vecs, y_train)
 print metrics.classification_report(y_train, knn.predict(train_vecs))
 
