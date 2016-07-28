@@ -17,7 +17,6 @@ pos_files = os.listdir(data_path + "pos/")
 neg_files = os.listdir(data_path + "neg/")
 
 
-
 # Do some very minor text preprocessing
 def cleanText(corpus):
     punctuation = """.,?!:;(){}[]"""
