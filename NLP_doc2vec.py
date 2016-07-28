@@ -123,6 +123,7 @@ x_train = labelizeReviews(x_train, 'TRAIN')
 x_test = labelizeReviews(x_test, 'TEST')
 unsup_reviews = labelizeReviews(unsup_reviews, 'UNSUP')
 
+# ===========================================
 # Train Doc2Vec models
 size = 400
 iteration = 5
@@ -176,6 +177,7 @@ storeVecs(train_vecs, 'train_vecs.txt')
 storeVecs(y_test, 'y_test.txt')
 storeVecs(y_train, 'y_train.txt')
 
+# ===========================================
 # Logistic Regression
 lr = SGDClassifier(loss='log', penalty='l1')
 lr.fit(train_vecs, y_train)
