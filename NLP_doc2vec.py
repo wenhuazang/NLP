@@ -66,6 +66,56 @@ def storeVecs(input, filename):
     fw.close()
 
 
+def buildtrainvecs(model_dm, model_dbow, x_train, unsup_reviews, iteration):
+    # We pass through the data set multiple times, shuffling the training reviews each time to improve accuracy.
+    temp2 = x_train[:]
+    temp2.extend(unsup_reviews)
+    # all_train_reviews = np.concatenate((x_train))
+    print "+==== Training =====+"
+    for epoch in range(iteration):
+        # perm = np.random.permutation(all_train_reviews.shape[0])
+        print "+=== Iteration %d ===+" % epoch
+        random.shuffle(temp2)
+        model_dm.train(temp2)
+        model_dbow.train(temp2)
+    train_vecs_dm = getVecs(model_dm, x_train, size)
+    train_vecs_dbow = getVecs(model_dbow, x_train, size)
+    train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
+    return train_vecs
+
+
+def buildtestvecs(model_dm, model_dbow, x_test, iteration):
+    # train over test set
+    x_test = np.array(x_test)
+    temp3 = x_test[:]
+    print "+===== Testing =====+"
+    for epoch in range(iteration):
+        print "+=== Iteration %d ===+" % epoch
+        random.shuffle(temp3)
+        model_dm.train(temp3)
+        model_dbow.train(temp3)
+
+    # Construct vectors for test reviews
+    test_vecs_dm = getVecs(model_dm, x_test, size)
+    test_vecs_dbow = getVecs(model_dbow, x_test, size)
+    test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
+    return test_vecs
+
+
+def ShowROC(Classifier, figure):
+    pred_probas = Classifier.predict_proba(test_vecs)[:, 1]
+
+    plt.figure(figure)
+    fpr, tpr, _ = roc_curve(y_test, pred_probas)
+    roc_auc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.legend(loc='lower right')
+    plt.show()
+
+
 def load_sup_set():
     pos_reviews = []
     neg_reviews = []
@@ -111,6 +161,7 @@ def load_unsup_set():
     unsup_reviews.extend(unsup_reviews2)
     return unsup_reviews
 
+# ===========================================
 # load data
 x_train, x_test, y_train, y_test = load_sup_set()
 unsup_reviews = load_unsup_set()
@@ -138,37 +189,11 @@ temp1.extend(unsup_reviews)
 model_dm.build_vocab(temp1)
 model_dbow.build_vocab(temp1)
 
-# We pass through the data set multiple times, shuffling the training reviews each time to improve accuracy.
-temp2 = x_train[:]
-temp2.extend(unsup_reviews)
-# all_train_reviews = np.concatenate((x_train))
-print "+==== Training =====+"
-for epoch in range(iteration):
-    # perm = np.random.permutation(all_train_reviews.shape[0])
-    print "+=== Iteration %d ===+" % epoch
-    random.shuffle(temp2)
-    model_dm.train(temp2)
-    model_dbow.train(temp2)
+# get train_vecs
+train_vecs = buildtrainvecs(model_dm, model_dbow, x_train, unsup_reviews, iteration)
 
-
-train_vecs_dm = getVecs(model_dm, x_train, size)
-train_vecs_dbow = getVecs(model_dbow, x_train, size)
-train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
-
-# train over test set
-x_test = np.array(x_test)
-temp3 = x_test[:]
-print "+===== Testing =====+"
-for epoch in range(iteration):
-    print "+=== Iteration %d ===+" % epoch
-    random.shuffle(temp3)
-    model_dm.train(temp3)
-    model_dbow.train(temp3)
-
-# Construct vectors for test reviews
-test_vecs_dm = getVecs(model_dm, x_test, size)
-test_vecs_dbow = getVecs(model_dbow, x_test, size)
-test_vecs = np.hstack((test_vecs_dm, test_vecs_dbow))
+# get test vecs
+test_vecs = buildtestvecs(model_dm, model_dbow, x_test, iteration)
 
 
 storeVecs(test_vecs, 'test_vecs.txt')
@@ -183,17 +208,7 @@ lr.fit(train_vecs, y_train)
 print 'Test Accuracy of Logistic: %.2f' % lr.score(test_vecs, y_test)
 print 'Train Accuracy of Logistic: %.2f' % lr.score(train_vecs, y_train)
 
-pred_probas = lr.predict_proba(test_vecs)[:, 1]
-
-plt.figure(1)
-fpr, tpr, _ = roc_curve(y_test, pred_probas)
-roc_auc = auc(fpr, tpr)
-plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.legend(loc='lower right')
-plt.show()
+ShowROC(lr, 1)
 
 # SVM
 svm = SVC(C=50, gamma=1, probability=True)
@@ -202,17 +217,7 @@ print 'Test Accuracy of SVM: %.2f' % svm.score(test_vecs, y_test)
 print 'Train Accuracy of SVM: %.2f' % svm.score(train_vecs, y_train)
 print metrics.classification_report(y_train, svm.predict(train_vecs))
 
-pred_probas = svm.predict_proba(test_vecs)[:, 1]
-
-plt.figure(2)
-fpr, tpr, _ = roc_curve(y_test, pred_probas)
-roc_auc = auc(fpr, tpr)
-plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.legend(loc='lower right')
-plt.show()
+ShowROC(svm, 2)
 
 # KNN
 knn = neighbors.KNeighborsClassifier(15, weights='distance')
@@ -221,14 +226,4 @@ print 'Test Accuracy of knn: %.2f' % knn.score(test_vecs, y_test)
 print 'Train Accuracy of knn: %.2f' % knn.score(train_vecs, y_train)
 print metrics.classification_report(y_train, knn.predict(train_vecs))
 
-pred_probas = knn.predict_proba(test_vecs)[:, 1]
-
-plt.figure(3)
-fpr, tpr, _ = roc_curve(y_test, pred_probas)
-roc_auc = auc(fpr, tpr)
-plt.plot(fpr, tpr, label='area = %.2f' % roc_auc)
-plt.plot([0, 1], [0, 1], 'k--')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.legend(loc='lower right')
-plt.show()
+ShowROC(knn, 3)
