@@ -91,7 +91,7 @@ def buildtestvecs(model_dm, model_dbow, x_test, iteration):
     for epoch in range(iteration):
         print "+=== Iteration %d ===+" % epoch
         random.shuffle(temp3)
-        model_dm.train_words =False
+        model_dm.train_words = False
         model_dm.train(temp3)
         model_dbow.train_words = False
         model_dbow.train(temp3)
