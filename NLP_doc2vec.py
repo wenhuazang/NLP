@@ -86,13 +86,14 @@ def buildtrainvecs(model_dm, model_dbow, x_train, unsup_reviews, iteration):
 
 def buildtestvecs(model_dm, model_dbow, x_test, iteration):
     # train over test set
-    x_test = np.array(x_test)
     temp3 = x_test[:]
     print "+===== Testing =====+"
     for epoch in range(iteration):
         print "+=== Iteration %d ===+" % epoch
         random.shuffle(temp3)
+        model_dm.train_words = False
         model_dm.train(temp3)
+        model_dbow.train_words = False
         model_dbow.train(temp3)
 
     # Construct vectors for test reviews
