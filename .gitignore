@@ -1,7 +1,5 @@
 # Created by .ignore support plugin (hsz.mobi)
-.gitignore
-.idea
-
+/.idea
 /review_polarity/
 /test_vecs.txt
 /train_vecs.txt
@@ -9,3 +7,4 @@
 /y_train.txt
 .DS_Store
 /vectors.bin
+/.gitignore
