@@ -8,3 +8,6 @@
 .DS_Store
 /vectors.bin
 /.gitignore
+SVM_MODEL/
+LR_MODEL/
+KNN_MODEL/

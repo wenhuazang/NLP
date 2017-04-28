@@ -59,7 +59,7 @@ imdb_w2v = Word2Vec(size=n_dim, min_count=10)
 imdb_w2v.build_vocab(x_train)
 
 # Train the model over train_reviews (this may take several minutes)
-imdb_w2v.train(x_train)
+imdb_w2v.train(x_train, epochs=10, total_examples=2000)
 
 
 # Build word vector for training set by using the average value of all word vectors in the tweet, then scale
@@ -81,7 +81,7 @@ train_vecs = np.concatenate([buildWordVector(z, n_dim) for z in x_train])
 train_vecs = scale(train_vecs)
 
 # Train word2vec on test tweets
-imdb_w2v.train(x_test)
+imdb_w2v.train(x_test, epochs=10, total_examples=2000)
 
 test_vecs = np.concatenate([buildWordVector(z, n_dim) for z in x_test])
 test_vecs = scale(test_vecs)

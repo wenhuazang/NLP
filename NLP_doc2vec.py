@@ -77,8 +77,8 @@ def buildtrainvecs(model_dm, model_dbow, x_train, unsup_reviews, iteration):
         # perm = np.random.permutation(all_train_reviews.shape[0])
         print "+=== Iteration %d ===+" % epoch
         random.shuffle(temp2)
-        model_dm.train(temp2)
-        model_dbow.train(temp2)
+        model_dm.train(temp2, epochs=1, total_examples=2000)
+        model_dbow.train(temp2, epochs=1, total_examples=2000)
     train_vecs_dm = getVecs(model_dm, x_train, size)
     train_vecs_dbow = getVecs(model_dbow, x_train, size)
     train_vecs = np.hstack((train_vecs_dm, train_vecs_dbow))
@@ -93,9 +93,9 @@ def buildtestvecs(model_dm, model_dbow, x_test, iteration):
         print "+=== Iteration %d ===+" % epoch
         random.shuffle(temp3)
         model_dm.train_words = False
-        model_dm.train(temp3)
+        model_dm.train(temp3, epochs=1, total_examples=2000)
         model_dbow.train_words = False
-        model_dbow.train(temp3)
+        model_dbow.train(temp3, epochs=1, total_examples=2000)
 
     # Construct vectors for test reviews
     test_vecs_dm = getVecs(model_dm, x_test, size)
